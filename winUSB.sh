@@ -7,8 +7,39 @@
 # License: GPL-3.0
 # --------------------------------------------------------------
 # Input parameters: Path to the ISO file and USB block device location
-ISO_PATH=$1
-USB_BLOCK=$2
+
+# Verifique se o script está sendo executado como root
+if [ "$EUID" -ne 0 ]; then
+  echo "Este script deve ser executado como root/sudo. Saindo...."
+  exit 1
+fi
+
+ISO_PATH=""
+while [ ! -f "$ISO_PATH" ]; do
+  read -e -i "$ISO_PATH" -p "Informe o caminho da ISO ou pressione 'q' para sair: " ISO_PATH
+#  ISO_PATH=$(echo "$ISO_PATH" | tr '[:upper:]' '[:lower:]')
+  if [ "$ISO_PATH" = "q" ]; then
+    echo "Saindo."
+    exit 1
+  fi
+  if [ ! -f "$ISO_PATH" ]; then
+    echo "O arquivo ISO não foi encontrado em '$ISO_PATH'. Tente novamente ou pressione 'Q' para sair."
+  fi
+done
+# Lista os dispositivos de bloco
+lsblk
+
+USB_BLOCK=""
+while [ ! -b "/dev/$USB_BLOCK" ]; do
+  read -e -i "$USB_BLOCK" -p "Informe qual dispositivo para gravar imagem ou pressione 'q' para sair: " USB_BLOCK
+  if [ "$USB_BLOCK" = "q" ]; then
+    echo "Saindo."
+    exit 1
+  fi
+  if [ ! -b "/dev/$USB_BLOCK" ]; then
+    echo "O dispositivo USB_BLOCK '/dev/$USB_BLOCK' não foi encontrado. Tente novamente ou pressione 'Q' para sair."
+  fi
+done
 
 echo "ISO Path is: $ISO_PATH"
 echo "USB block device is: $USB_BLOCK"
