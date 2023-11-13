@@ -17,7 +17,6 @@ fi
 ISO_PATH=""
 while [ ! -f "$ISO_PATH" ]; do
   read -e -i "$ISO_PATH" -p "Informe o caminho da ISO ou pressione 'q' para sair: " ISO_PATH
-#  ISO_PATH=$(echo "$ISO_PATH" | tr '[:upper:]' '[:lower:]')
   if [ "$ISO_PATH" = "q" ]; then
     echo "Saindo."
     exit 1
